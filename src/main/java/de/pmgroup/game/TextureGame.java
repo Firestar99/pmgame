@@ -29,7 +29,7 @@ public class TextureGame extends AbstractGame {
 	
 	@Override
 	public void init() {
-		textureEmoji = GlTexture.load(TextureGame.class.getResourceAsStream("emoji.png"));
+		textureEmoji = new GlTexture(Texture.load(TextureGame.class.getResourceAsStream("emoji.png")));
 		modelEmoji = new GlModel(
 				GL_QUADS,
 				new float[]{

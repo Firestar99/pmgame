@@ -1,44 +1,37 @@
 package de.pmgroup.game.graphics;
 
-import org.lwjgl.BufferUtils;
+import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.nio.ByteBuffer;
 
-import de.matthiasmann.twl.utils.PNGDecoder;
-import de.pmgroup.game.TextureGame;
+import de.pmgroup.game.Texture;
 
 import static org.lwjgl.opengl.GL11.*;
 
 public class GlTexture {
 	
-	public static GlTexture load(InputStream in) {
-		try {
-			PNGDecoder dec = new PNGDecoder(TextureGame.class.getResourceAsStream("emoji.png"));
-			int width = dec.getWidth();
-			int height = dec.getHeight();
-			ByteBuffer buffer = BufferUtils.createByteBuffer(height * width * 4);
-			dec.decode(buffer, width * 4, PNGDecoder.Format.RGBA);
-			buffer.flip();
-			return new GlTexture(width, height, buffer);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
-	
+	private final int width, height;
 	private final int textureId;
 	
-	public GlTexture(int width, int height, ByteBuffer buffer) {
+	public GlTexture(int width, int height) {
+		this(width, height, null);
+	}
+	
+	public GlTexture(Texture texture) {
+		this(texture.width, texture.height, texture.buffer);
+	}
+	
+	public GlTexture(int width, int height, @Nullable ByteBuffer buffer) {
 		this.textureId = glGenTextures();
-		bind();
+		this.width = width;
+		this.height = height;
 		
+		bind();
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-		
 		unbind();
 	}
 	
@@ -50,6 +43,14 @@ public class GlTexture {
 	public static void unbind() {
 		glDisable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+	
+	public void uploadTexture(Texture texture) {
+		if (width != texture.width || height != texture.height)
+			throw new RuntimeException();
+		bind();
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, texture.buffer);
+		unbind();
 	}
 	
 	public void free() {
