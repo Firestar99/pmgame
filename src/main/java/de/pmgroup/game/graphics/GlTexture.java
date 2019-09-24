@@ -11,9 +11,9 @@ import de.pmgroup.game.TextureGame;
 
 import static org.lwjgl.opengl.GL11.*;
 
-public class Texture {
+public class GlTexture {
 	
-	public static Texture load(InputStream in) {
+	public static GlTexture load(InputStream in) {
 		try {
 			PNGDecoder dec = new PNGDecoder(TextureGame.class.getResourceAsStream("emoji.png"));
 			int width = dec.getWidth();
@@ -21,7 +21,7 @@ public class Texture {
 			ByteBuffer buffer = BufferUtils.createByteBuffer(height * width * 4);
 			dec.decode(buffer, width * 4, PNGDecoder.Format.RGBA);
 			buffer.flip();
-			return new Texture(width, height, buffer);
+			return new GlTexture(width, height, buffer);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -29,9 +29,9 @@ public class Texture {
 	
 	private final int textureId;
 	
-	public Texture(int width, int height, ByteBuffer buffer) {
+	public GlTexture(int width, int height, ByteBuffer buffer) {
 		this.textureId = glGenTextures();
-		glBindTexture(GL_TEXTURE_2D, textureId);
+		bind();
 		
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -39,7 +39,7 @@ public class Texture {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
 		
-		glBindTexture(GL_TEXTURE_2D, 0);
+		unbind();
 	}
 	
 	public void bind() {

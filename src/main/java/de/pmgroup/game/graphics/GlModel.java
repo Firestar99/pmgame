@@ -4,37 +4,37 @@ import org.jetbrains.annotations.Nullable;
 
 import static org.lwjgl.opengl.GL11.*;
 
-public class Model {
+public class GlModel {
 	
 	private final int type;
 	private final float[] vertex;
 	private final @Nullable float[] color;
 	private final @Nullable float[] textureCorrd;
-	private final @Nullable Texture texture;
+	private final @Nullable GlTexture glTexture;
 	
-	public Model(int type, float[] vertex) {
+	public GlModel(int type, float[] vertex) {
 		this(type, vertex, null, null, null);
 	}
 	
-	public Model(int type, float[] color, float[] vertex) {
+	public GlModel(int type, float[] color, float[] vertex) {
 		this(type, vertex, color, null, null);
 	}
 	
-	public Model(int type, float[] vertex, @Nullable float[] textureCorrd, @Nullable Texture texture) {
-		this(type, vertex, null, textureCorrd, texture);
+	public GlModel(int type, float[] vertex, @Nullable float[] textureCorrd, @Nullable GlTexture glTexture) {
+		this(type, vertex, null, textureCorrd, glTexture);
 	}
 	
-	public Model(int type, float[] vertex, @Nullable float[] color, @Nullable float[] textureCorrd, @Nullable Texture texture) {
+	public GlModel(int type, float[] vertex, @Nullable float[] color, @Nullable float[] textureCorrd, @Nullable GlTexture glTexture) {
 		this.type = type;
 		this.vertex = vertex;
 		this.color = color;
 		this.textureCorrd = textureCorrd;
-		this.texture = texture;
+		this.glTexture = glTexture;
 	}
 	
 	public void draw() {
-		if (texture != null)
-			texture.bind();
+		if (glTexture != null)
+			glTexture.bind();
 		if (color != null)
 			glColor3f(color[0], color[1], color[2]);
 		glBegin(type);
@@ -46,8 +46,8 @@ public class Model {
 		glEnd();
 		if (color != null)
 			glColor3f(1, 1, 1);
-		if (texture != null)
-			Texture.unbind();
+		if (glTexture != null)
+			GlTexture.unbind();
 	}
 	
 	public void free() {

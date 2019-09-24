@@ -2,8 +2,8 @@ package de.pmgroup.game;
 
 import de.pmgroup.game.graphics.AbstractGame;
 import de.pmgroup.game.graphics.GameBuilder;
-import de.pmgroup.game.graphics.Model;
-import de.pmgroup.game.graphics.Texture;
+import de.pmgroup.game.graphics.GlModel;
+import de.pmgroup.game.graphics.GlTexture;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -12,8 +12,8 @@ public class TextureGame extends AbstractGame {
 	public static void main(String[] args) {
 		new TextureGame(
 				new GameBuilder()
-						.setWidth(1980)
-						.setHeight(1980)
+						.setWidth(1080)
+						.setHeight(1080)
 						.setTitle("Triangle")
 						.setFullscreen(false)
 		).run();
@@ -23,14 +23,14 @@ public class TextureGame extends AbstractGame {
 		super(b);
 	}
 	
-	private Texture textureEmoji;
-	private Model modelEmoji;
-	private Model modelTriangle;
+	private GlTexture textureEmoji;
+	private GlModel modelEmoji;
+	private GlModel modelTriangle;
 	
 	@Override
 	public void init() {
-		textureEmoji = Texture.load(TextureGame.class.getResourceAsStream("emoji.png"));
-		modelEmoji = new Model(
+		textureEmoji = GlTexture.load(TextureGame.class.getResourceAsStream("emoji.png"));
+		modelEmoji = new GlModel(
 				GL_QUADS,
 				new float[]{
 						-1, -1,
@@ -46,7 +46,7 @@ public class TextureGame extends AbstractGame {
 				},
 				textureEmoji
 		);
-		modelTriangle = new Model(
+		modelTriangle = new GlModel(
 				GL_TRIANGLES,
 				new float[]{
 						1, 0, 0
