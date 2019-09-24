@@ -33,14 +33,14 @@ public class Texture {
 		this.height = height;
 	}
 	
-	public byte[] getPixel(int x, int y) {
+	public Color getPixel(int x, int y) {
 		byte[] ret = new byte[4];
 		buffer.get(ret, y * height + x, 4);
-		return ret;
+		return new Color(ret[0], ret[1], ret[2], ret[3]);
 	}
 	
-	public void setPixel(int x, int y, byte[] color) {
-		buffer.put(color, y * height + x, 4);
+	public void setPixel(int x, int y, Color color) {
+		buffer.put(new byte[]{color.r, color.g, color.b, color.a}, y * height + x, 4);
 	}
 	
 }
