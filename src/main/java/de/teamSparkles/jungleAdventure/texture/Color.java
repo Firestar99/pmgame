@@ -1,4 +1,4 @@
-package de.pmgroup.game;
+package de.teamSparkles.jungleAdventure.texture;
 
 public class Color {
 	

@@ -7,10 +7,11 @@ ext {
     lwjglVersion = '3.2.3'
 }
 
-group 'pmgroup'
+group 'de.teamSparkles'
 version '1.0'
 
 sourceCompatibility = 1.11
+mainClassName = "de.teamSparkles.jungleAdventure.JungleAdventure"
 
 repositories {
     mavenCentral()

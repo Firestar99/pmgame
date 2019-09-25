@@ -1,19 +1,15 @@
-package de.pmgroup.game.graphics;
+package de.teamSparkles.engine.game;
+
+import java.util.function.Function;
 
 public class GameBuilder implements Cloneable {
 	
 	public int width, height;
 	public String title;
 	public boolean fullscreen;
+	public Function<Long, Game> starter;
 	
 	public GameBuilder() {
-	}
-	
-	public GameBuilder(int width, int height, String title, boolean fullscreen) {
-		this.width = width;
-		this.height = height;
-		this.title = title;
-		this.fullscreen = fullscreen;
 	}
 	
 	public GameBuilder setWidth(int width) {
@@ -34,6 +30,15 @@ public class GameBuilder implements Cloneable {
 	public GameBuilder setFullscreen(boolean fullscreen) {
 		this.fullscreen = fullscreen;
 		return this;
+	}
+	
+	public GameBuilder setStarter(Function<Long, Game> starter) {
+		this.starter = starter;
+		return this;
+	}
+	
+	public GameLoop build() {
+		return new GameLoop(this);
 	}
 	
 	@Override

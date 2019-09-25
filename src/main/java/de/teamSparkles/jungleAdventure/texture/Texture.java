@@ -1,4 +1,4 @@
-package de.pmgroup.game;
+package de.teamSparkles.jungleAdventure.texture;
 
 import org.lwjgl.BufferUtils;
 
