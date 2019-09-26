@@ -5,11 +5,16 @@ import org.lwjgl.system.MemoryUtil;
 import de.teamSparkles.engine.game.Game;
 import de.teamSparkles.engine.game.GameBuilder;
 import de.teamSparkles.engine.graphics.GlTexture;
+import de.teamSparkles.engine.graphics.GlTextureParam;
 import de.teamSparkles.jungleAdventure.texture.Texture;
 
 import static org.lwjgl.opengl.GL43.*;
 
 public class JungleAdventure extends Game {
+	
+	public static final GlTextureParam TEXTURE_PARAM_NEAREST = new GlTextureParam()
+			.setFilterMin(GL_NEAREST)
+			.setFilterMag(GL_NEAREST);
 	
 	public static void main(String[] args) {
 		new GameBuilder()
@@ -37,7 +42,7 @@ public class JungleAdventure extends Game {
 		glBindVertexArray(vaoEmpty);
 		
 		//images
-		textureEmoji = new GlTexture(Texture.load(JungleAdventure.class.getResourceAsStream("emoji.png")));
+		textureEmoji = new GlTexture(Texture.load(JungleAdventure.class.getResourceAsStream("emoji.png")), TEXTURE_PARAM_NEAREST);
 		
 		//shaders
 		shaderTextureRead = ShaderTextureRead.create();

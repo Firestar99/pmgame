@@ -13,26 +13,30 @@ public class GlTexture {
 	private final int width, height;
 	private final int textureId;
 	
-	public GlTexture(int width, int height) {
-		this(width, height, null);
+	public GlTexture(int width, int height, GlTextureParam textureParam) {
+		this(width, height, null, textureParam);
 	}
 	
-	public GlTexture(Texture texture) {
-		this(texture.width, texture.height, texture.buffer);
+	public GlTexture(Texture texture, GlTextureParam textureParam) {
+		this(texture.width, texture.height, texture.buffer, textureParam);
 	}
 	
-	public GlTexture(int width, int height, @Nullable ByteBuffer buffer) {
+	public GlTexture(int width, int height, @Nullable ByteBuffer buffer, GlTextureParam textureParam) {
 		this.textureId = glCreateTextures(GL_TEXTURE_2D);
 		this.width = width;
 		this.height = height;
 		
-		glTextureParameteri(textureId, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTextureParameteri(textureId, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTextureParameteri(textureId, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTextureParameteri(textureId, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTextureStorage2D(textureId, 1, GL_RGBA8, width, height);
-		if (buffer != null)
+		glTextureParameteri(textureId, GL_TEXTURE_WRAP_S, textureParam.wrap[0]);
+		glTextureParameteri(textureId, GL_TEXTURE_WRAP_T, textureParam.wrap[1]);
+		glTextureParameteri(textureId, GL_TEXTURE_WRAP_R, textureParam.wrap[2]);
+		glTextureParameteri(textureId, GL_TEXTURE_MIN_FILTER, textureParam.filterMin);
+		glTextureParameteri(textureId, GL_TEXTURE_MAG_FILTER, textureParam.filterMag);
+		glTextureStorage2D(textureId, textureParam.mipMapCount, GL_RGBA8, width, height);
+		if (buffer != null) {
 			glTextureSubImage2D(textureId, 0, 0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+			if (textureParam.genMipmaps)
+				glGenerateTextureMipmap(textureId);
+		}
 	}
 	
 	public void bind(int location) {
