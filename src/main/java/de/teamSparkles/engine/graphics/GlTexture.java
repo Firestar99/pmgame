@@ -10,8 +10,8 @@ import static org.lwjgl.opengl.GL45.*;
 
 public class GlTexture {
 	
-	private final int width, height;
-	private final int textureId;
+	public final int width, height;
+	public final int textureId;
 	
 	public GlTexture(int width, int height, GlTextureParam textureParam) {
 		this(width, height, null, textureParam);

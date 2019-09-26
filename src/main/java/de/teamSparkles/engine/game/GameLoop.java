@@ -19,7 +19,9 @@ public class GameLoop implements Runnable {
 	public final int openglVersionMayor, openglVersionMinor;
 	public final boolean openglForwardCompatible;
 	public final GLDebugMessageCallbackI openglDebugCallback;
-	public final Function<Long, Game> starter;
+	public final Function<GameLoop, Game> starter;
+	
+	private long windowPointer;
 	
 	public GameLoop(GameBuilder b) {
 		this.width = b.width;
@@ -43,7 +45,7 @@ public class GameLoop implements Runnable {
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, toGlfwBoolean(openglForwardCompatible));
 		glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, toGlfwBoolean(openglDebugCallback != null));
-		long windowPointer = glfwCreateWindow(width, height, title, fullscreen ? glfwGetPrimaryMonitor() : 0, 0);
+		windowPointer = glfwCreateWindow(width, height, title, fullscreen ? glfwGetPrimaryMonitor() : 0, 0);
 		if (windowPointer == 0)
 			throw new RuntimeException("Could not create Window! glfwCreateWindow returned null");
 		glfwMakeContextCurrent(windowPointer);
@@ -54,7 +56,7 @@ public class GameLoop implements Runnable {
 			glDebugMessageCallback(openglDebugCallback, 0);
 		}
 		
-		Game game = starter.apply(windowPointer);
+		Game game = starter.apply(this);
 		while (!glfwWindowShouldClose(windowPointer)) {
 			game.update();
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -76,4 +78,7 @@ public class GameLoop implements Runnable {
 		return b ? GLFW_TRUE : GLFW_FALSE;
 	}
 	
+	public long windowPointer() {
+		return windowPointer;
+	}
 }

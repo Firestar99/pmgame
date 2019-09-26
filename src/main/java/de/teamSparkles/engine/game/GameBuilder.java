@@ -12,7 +12,7 @@ public class GameBuilder implements Cloneable {
 	public int openglVersionMayor = 2, openglVersionMinor = 1;
 	public boolean openglForwardCompatible = false;
 	public GLDebugMessageCallbackI openglDebugCallback;
-	public Function<Long, Game> starter;
+	public Function<GameLoop, Game> starter;
 	
 	public GameBuilder() {
 	}
@@ -37,7 +37,7 @@ public class GameBuilder implements Cloneable {
 		return this;
 	}
 	
-	public GameBuilder setStarter(Function<Long, Game> starter) {
+	public GameBuilder setStarter(Function<GameLoop, Game> starter) {
 		this.starter = starter;
 		return this;
 	}

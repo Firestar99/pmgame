@@ -4,6 +4,9 @@ import org.lwjgl.system.MemoryUtil;
 
 import de.teamSparkles.engine.game.Game;
 import de.teamSparkles.engine.game.GameBuilder;
+import de.teamSparkles.engine.game.GameLoop;
+import de.teamSparkles.engine.graphics.GlFramebuffer;
+import de.teamSparkles.engine.graphics.GlFramebuffer.Attachment;
 import de.teamSparkles.engine.graphics.GlTexture;
 import de.teamSparkles.engine.graphics.GlTextureParam;
 import de.teamSparkles.jungleAdventure.texture.Texture;
@@ -15,6 +18,9 @@ public class JungleAdventure extends Game {
 	public static final GlTextureParam TEXTURE_PARAM_NEAREST = new GlTextureParam()
 			.setFilterMin(GL_NEAREST)
 			.setFilterMag(GL_NEAREST);
+	public static final GlTextureParam TEXTURE_PARAM_FBO_ATTACHMENT = new GlTextureParam()
+			.setFilterMin(GL_LINEAR)
+			.setFilterMag(GL_LINEAR);
 	
 	public static void main(String[] args) {
 		new GameBuilder()
@@ -29,13 +35,24 @@ public class JungleAdventure extends Game {
 				.run();
 	}
 	
-	private final long windowPtr;
-	private final int vaoEmpty;
-	private final GlTexture textureEmoji;
-	private final ShaderTextureRead shaderTextureRead;
+	private final GameLoop gameLoop;
 	
-	public JungleAdventure(long windowPtr) {
-		this.windowPtr = windowPtr;
+	//vaoEmpty
+	private final int vaoEmpty;
+	
+	//images
+	private final GlTexture textureEmoji;
+	
+	//shaders
+	private final ShaderTextureRead shaderTextureRead;
+	private final ShaderSimplePostprocess shaderSimplePostprocess;
+	
+	//framebuffer
+	private final GlTexture fbo3dColor;
+	private final GlFramebuffer fbo3d;
+	
+	public JungleAdventure(GameLoop gameLoop) {
+		this.gameLoop = gameLoop;
 		
 		//vaoEmpty
 		vaoEmpty = glGenVertexArrays();
@@ -46,6 +63,11 @@ public class JungleAdventure extends Game {
 		
 		//shaders
 		shaderTextureRead = ShaderTextureRead.create();
+		shaderSimplePostprocess = ShaderSimplePostprocess.create();
+		
+		//framebuffer
+		fbo3dColor = new GlTexture(gameLoop.width, gameLoop.height, TEXTURE_PARAM_FBO_ATTACHMENT);
+		fbo3d = new GlFramebuffer(new Attachment(GL_COLOR_ATTACHMENT0, fbo3dColor));
 	}
 	
 	@Override
@@ -62,6 +84,7 @@ public class JungleAdventure extends Game {
 	
 	@Override
 	public void render() {
+		fbo3d.bind();
 		shaderTextureRead.draw(new float[]{
 				0, 0, 0, 0,
 				0, 1, 0, 1,
@@ -70,5 +93,8 @@ public class JungleAdventure extends Game {
 				1, 0, 1, 0,
 				1, 1, 1, 1,
 		}, textureEmoji);
+		GlFramebuffer.unbind();
+		
+		shaderSimplePostprocess.draw(fbo3dColor);
 	}
 }
