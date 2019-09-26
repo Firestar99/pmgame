@@ -2,17 +2,35 @@ package de.teamSparkles.engine.game;
 
 
 import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GLDebugMessageCallbackI;
+
+import java.util.function.Function;
 
 import static de.teamSparkles.engine.graphics.GlErrorCheck.checkError;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL43.*;
 
 public class GameLoop implements Runnable {
 	
-	private final GameBuilder b;
+	public final int width, height;
+	public final String title;
+	public final boolean fullscreen;
+	public final int openglVersionMayor, openglVersionMinor;
+	public final boolean openglForwardCompatible;
+	public final GLDebugMessageCallbackI openglDebugCallback;
+	public final Function<Long, Game> starter;
 	
 	public GameLoop(GameBuilder b) {
-		this.b = b.clone();
+		this.width = b.width;
+		this.height = b.height;
+		this.title = b.title;
+		this.fullscreen = b.fullscreen;
+		this.openglVersionMayor = b.openglVersionMayor;
+		this.openglVersionMinor = b.openglVersionMinor;
+		this.openglForwardCompatible = b.openglForwardCompatible;
+		this.openglDebugCallback = b.openglDebugCallback;
+		this.starter = b.starter;
 	}
 	
 	@Override
@@ -20,18 +38,23 @@ public class GameLoop implements Runnable {
 		glfwInit();
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, openglVersionMayor);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, openglVersionMinor);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
-		glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
-		long windowPointer = glfwCreateWindow(b.width, b.height, b.title, b.fullscreen ? glfwGetPrimaryMonitor() : 0, 0);
+		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, toGlfwBoolean(openglForwardCompatible));
+		glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, toGlfwBoolean(openglDebugCallback != null));
+		long windowPointer = glfwCreateWindow(width, height, title, fullscreen ? glfwGetPrimaryMonitor() : 0, 0);
 		if (windowPointer == 0)
 			throw new RuntimeException("Could not create Window! glfwCreateWindow returned null");
 		glfwMakeContextCurrent(windowPointer);
-		GL.createCapabilities(false);
+		GL.createCapabilities(openglForwardCompatible);
 		
-		Game game = b.starter.apply(windowPointer);
+		if (openglDebugCallback != null) {
+			nglDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, 0, true);
+			glDebugMessageCallback(openglDebugCallback, 0);
+		}
+		
+		Game game = starter.apply(windowPointer);
 		while (!glfwWindowShouldClose(windowPointer)) {
 			game.update();
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -47,6 +70,10 @@ public class GameLoop implements Runnable {
 		
 		glfwDestroyWindow(windowPointer);
 		glfwTerminate();
+	}
+	
+	private static int toGlfwBoolean(boolean b) {
+		return b ? GLFW_TRUE : GLFW_FALSE;
 	}
 	
 }

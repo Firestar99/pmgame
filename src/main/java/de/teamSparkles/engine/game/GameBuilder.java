@@ -1,12 +1,17 @@
 package de.teamSparkles.engine.game;
 
+import org.lwjgl.opengl.GLDebugMessageCallbackI;
+
 import java.util.function.Function;
 
 public class GameBuilder implements Cloneable {
 	
-	public int width, height;
-	public String title;
-	public boolean fullscreen;
+	public int width = 1920, height = 1080;
+	public String title = "Unnamed Game";
+	public boolean fullscreen = false;
+	public int openglVersionMayor = 2, openglVersionMinor = 1;
+	public boolean openglForwardCompatible = false;
+	public GLDebugMessageCallbackI openglDebugCallback;
 	public Function<Long, Game> starter;
 	
 	public GameBuilder() {
@@ -37,16 +42,21 @@ public class GameBuilder implements Cloneable {
 		return this;
 	}
 	
-	public GameLoop build() {
-		return new GameLoop(this);
+	public GameBuilder setOpenglVersion(int versionMayor, int versionMinor, boolean forwardCompatible) {
+		this.openglVersionMayor = versionMayor;
+		this.openglVersionMinor = versionMinor;
+		this.openglForwardCompatible = forwardCompatible;
+		return this;
 	}
 	
-	@Override
-	public GameBuilder clone() {
-		try {
-			return (GameBuilder) super.clone();
-		} catch (CloneNotSupportedException e) {
-			throw new RuntimeException(e);
-		}
+	public GameBuilder setOpenglDebugCallback(GLDebugMessageCallbackI openglDebugCallback) {
+		this.openglDebugCallback = openglDebugCallback;
+		return this;
+	}
+	
+	public GameLoop build() {
+		if (starter == null)
+			throw new IllegalArgumentException("starter is null");
+		return new GameLoop(this);
 	}
 }

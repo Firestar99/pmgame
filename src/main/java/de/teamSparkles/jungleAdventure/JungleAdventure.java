@@ -18,6 +18,8 @@ public class JungleAdventure extends Game {
 				.setHeight(1080)
 				.setFullscreen(false)
 				.setTitle("Jungle Game")
+				.setOpenglVersion(4, 3, false)
+				.setOpenglDebugCallback((source, type, id, severity, length, message, userParam) -> System.out.println("OpenGL debug: " + MemoryUtil.memUTF8(message, length)))
 				.setStarter(JungleAdventure::new)
 				.build()
 				.run();
@@ -30,9 +32,6 @@ public class JungleAdventure extends Game {
 	
 	public JungleAdventure(long windowPtr) {
 		this.windowPtr = windowPtr;
-		
-		nglDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, 0, true);
-		glDebugMessageCallback((source, type, id, severity, length, message, userParam) -> System.out.println("OpenGL debug: " + MemoryUtil.memUTF8(message, length)), 0);
 		
 		//vaoEmpty
 		vaoEmpty = glGenVertexArrays();
@@ -52,6 +51,9 @@ public class JungleAdventure extends Game {
 		
 		//shaders
 		shaderTextureRead.release();
+		
+		//vaoEmpty
+		glDeleteVertexArrays(vaoEmpty);
 	}
 	
 	@Override
