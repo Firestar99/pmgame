@@ -1,4 +1,4 @@
-package de.teamSparkles.jungleAdventure.texture;
+package de.teamSparkles.engine.texture;
 
 public class Color {
 	

@@ -9,8 +9,10 @@ import de.teamSparkles.engine.graphics.GlFramebuffer;
 import de.teamSparkles.engine.graphics.GlFramebuffer.Attachment;
 import de.teamSparkles.engine.graphics.GlTexture;
 import de.teamSparkles.engine.graphics.GlTextureParam;
-import de.teamSparkles.jungleAdventure.texture.Texture;
+import de.teamSparkles.engine.texture.Texture;
+import de.teamSparkles.jungleAdventure.postprocess.distortion.PostprocessDistortion;
 
+import static java.lang.Math.*;
 import static org.lwjgl.opengl.GL43.*;
 
 public class JungleAdventure extends Game {
@@ -18,6 +20,9 @@ public class JungleAdventure extends Game {
 	public static final GlTextureParam TEXTURE_PARAM_NEAREST = new GlTextureParam()
 			.setFilterMin(GL_NEAREST)
 			.setFilterMag(GL_NEAREST);
+	public static final GlTextureParam TEXTURE_PARAM_LINEAR = new GlTextureParam()
+			.setFilterMin(GL_LINEAR)
+			.setFilterMag(GL_LINEAR);
 	public static final GlTextureParam TEXTURE_PARAM_FBO_ATTACHMENT = new GlTextureParam()
 			.setFilterMin(GL_LINEAR)
 			.setFilterMag(GL_LINEAR);
@@ -45,11 +50,13 @@ public class JungleAdventure extends Game {
 	
 	//shaders
 	private final ShaderTextureRead shaderTextureRead;
-	private final ShaderSimplePostprocess shaderSimplePostprocess;
 	
 	//framebuffer
 	private final GlTexture fbo3dColor;
 	private final GlFramebuffer fbo3d;
+	
+	//parts
+	private final PostprocessDistortion postprocessDistortion;
 	
 	public JungleAdventure(GameLoop gameLoop) {
 		this.gameLoop = gameLoop;
@@ -63,11 +70,13 @@ public class JungleAdventure extends Game {
 		
 		//shaders
 		shaderTextureRead = ShaderTextureRead.create();
-		shaderSimplePostprocess = ShaderSimplePostprocess.create();
 		
 		//framebuffer
 		fbo3dColor = new GlTexture(gameLoop.width, gameLoop.height, TEXTURE_PARAM_FBO_ATTACHMENT);
 		fbo3d = new GlFramebuffer(new Attachment(GL_COLOR_ATTACHMENT0, fbo3dColor));
+		
+		//parts
+		postprocessDistortion = new PostprocessDistortion();
 	}
 	
 	@Override
@@ -86,15 +95,16 @@ public class JungleAdventure extends Game {
 	public void render() {
 		fbo3d.bind();
 		shaderTextureRead.draw(new float[]{
-				0, 0, 0, 0,
-				0, 1, 0, 1,
+				-1, -1, 0, 0,
+				-1, 1, 0, 1,
 				1, 1, 1, 1,
-				0, 0, 0, 0,
-				1, 0, 1, 0,
+				-1, -1, 0, 0,
+				1, -1, 1, 0,
 				1, 1, 1, 1,
 		}, textureEmoji);
 		GlFramebuffer.unbind();
 		
-		shaderSimplePostprocess.draw(fbo3dColor);
+		float angle = System.nanoTime() / 1_000_000_000f * 2f * (float) PI / 10;
+		postprocessDistortion.draw(fbo3dColor, new float[]{(float) sin(angle), (float) cos(angle)});
 	}
 }

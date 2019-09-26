@@ -4,7 +4,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.nio.ByteBuffer;
 
-import de.teamSparkles.jungleAdventure.texture.Texture;
+import de.teamSparkles.engine.texture.Texture;
 
 import static org.lwjgl.opengl.GL45.*;
 

@@ -1,4 +1,4 @@
-package de.teamSparkles.jungleAdventure.texture;
+package de.teamSparkles.engine.texture;
 
 import org.lwjgl.BufferUtils;
 
@@ -16,7 +16,7 @@ public class Texture {
 			int width = dec.getWidth();
 			int height = dec.getHeight();
 			ByteBuffer buffer = BufferUtils.createByteBuffer(height * width * 4);
-			dec.decode(buffer, width * 4, PNGDecoder.Format.RGBA);
+			dec.decodeFlipped(buffer, width * 4, PNGDecoder.Format.RGBA);
 			buffer.flip();
 			return new Texture(buffer, width, height);
 		} catch (IOException e) {
