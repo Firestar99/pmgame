@@ -7,7 +7,6 @@ import de.teamSparkles.engine.game.GameBuilder;
 import de.teamSparkles.engine.graphics.GlTexture;
 import de.teamSparkles.jungleAdventure.texture.Texture;
 
-import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL43.*;
 
 public class JungleAdventure extends Game {
@@ -58,7 +57,7 @@ public class JungleAdventure extends Game {
 	
 	@Override
 	public void render() {
-		shaderTextureRead.use(new float[]{
+		shaderTextureRead.draw(new float[]{
 				0, 0, 0, 0,
 				0, 1, 0, 1,
 				1, 1, 1, 1,
@@ -66,6 +65,5 @@ public class JungleAdventure extends Game {
 				1, 0, 1, 0,
 				1, 1, 1, 1,
 		}, textureEmoji);
-		glDrawArrays(GL_TRIANGLES, 0, 6);
 	}
 }

@@ -29,7 +29,7 @@ public class ShaderTextureRead extends GlShader {
 		uniformInputs = glGetUniformLocation(shaderProgram, "inputs");
 	}
 	
-	public void use(float[] input, GlTexture tex) {
+	public void draw(float[] input, GlTexture tex) {
 		bind();
 		
 		try {
@@ -39,6 +39,8 @@ public class ShaderTextureRead extends GlShader {
 			MemoryStack.stackPop();
 		}
 		tex.bind(0);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+		unbind();
 	}
 	
 }
