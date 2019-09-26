@@ -15,7 +15,6 @@ public class PostprocessDistortion {
 	
 	//textures
 	private final GlTexture textureDistortionDirection;
-	private final GlTexture textureDistortionHeight;
 	private final GlTexture textureDistortionRandom;
 	
 	//shaders
@@ -24,15 +23,14 @@ public class PostprocessDistortion {
 	public PostprocessDistortion() {
 		//textures
 		textureDistortionDirection = new GlTexture(Texture.load(PostprocessDistortion.class.getResourceAsStream("distortionDirection.png")), TEXTURE_PARAM);
-		textureDistortionHeight = new GlTexture(Texture.load(PostprocessDistortion.class.getResourceAsStream("distortionHeight.png")), TEXTURE_PARAM);
-		textureDistortionRandom = new GlTexture(Texture.load(PostprocessDistortion.class.getResourceAsStream("distortionRandom.png")), TEXTURE_PARAM);
+		textureDistortionRandom = new GlTexture(Texture.load(PostprocessDistortion.class.getResourceAsStream("distortionRandom2.png")), TEXTURE_PARAM);
 		
 		//shaders
 		shaderDistortion = ShaderPostprocessDistortion.create();
 	}
 	
-	public void draw(GlTexture color, float[] randomOffset) {
-		shaderDistortion.draw(color, textureDistortionDirection, textureDistortionHeight, textureDistortionRandom, randomOffset);
+	public void draw(GlTexture color, float[] randomOffset1, float[] randomOffset2) {
+		shaderDistortion.draw(color, textureDistortionDirection, textureDistortionRandom, randomOffset1, randomOffset2);
 	}
 	
 }

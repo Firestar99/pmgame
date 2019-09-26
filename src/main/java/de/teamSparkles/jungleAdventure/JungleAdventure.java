@@ -104,7 +104,8 @@ public class JungleAdventure extends Game {
 		}, textureEmoji);
 		GlFramebuffer.unbind();
 		
-		float angle = System.nanoTime() / 1_000_000_000f * 2f * (float) PI / 10;
-		postprocessDistortion.draw(fbo3dColor, new float[]{(float) sin(angle), (float) cos(angle)});
+		float angle = System.nanoTime() / 1_000_000_000f * 2f * (float) PI / 40;
+		float angle2 = angle + 34.6467f;
+		postprocessDistortion.draw(fbo3dColor, new float[]{(float) sin(angle), (float) cos(angle)}, new float[]{(float) sin(angle2), (float) cos(angle2)});
 	}
 }

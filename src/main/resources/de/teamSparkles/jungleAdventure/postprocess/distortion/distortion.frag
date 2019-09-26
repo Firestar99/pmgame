@@ -5,28 +5,26 @@ layout(location = 0) out vec4 outColor;
 
 layout (location = 0) in vec2 inTexCoord;
 
-layout (binding = 0) uniform sampler2D color;
-layout (binding = 1) uniform sampler2D distortionDirection;
-layout (binding = 2) uniform sampler2D distortionHeight;
-layout (binding = 3) uniform sampler2D distortionRandom;
+layout (binding = 0) uniform sampler2D texColor;
+layout (binding = 1) uniform sampler2D texDistortionDirection;
+layout (binding = 2) uniform sampler2D texDistortionRandom;
 
-uniform vec2 randomOffset;
-
-const int radius = 5;
-
-//vec2 heightToNormal(sampler2D sampler, vec2 texCoord, int offset) {
-//    float middle = texture(sampler, texCoord).x;
-//    float xp = textureOffset(sampler, texCoord, vec2(-offset, 0)).x;
-//    float xn = textureOffset(sampler, texCoord, vec2(offset, 0)).x;
-//    float yp = textureOffset(sampler, texCoord, vec2(0, -offset)).x;
-//    float yn = textureOffset(sampler, texCoord, vec2(0, offset)).x;
-//
-//    return vec2(xp-xn, yp-yn);
-//}
+uniform vec2 uniformRandomOffset1;
+uniform vec2 uniformRandomOffset2;
 
 void main() {
-    vec4 direction = texture(distortionDirection, inTexCoord);
-    //    float height = direction.b * texture(distortionHeight, inTexCoord).r * texture(distortionRandom, inTexCoord + randomOffset).r;
-    float height = direction.b * texture(distortionHeight, inTexCoord + randomOffset).r;
-    outColor = texture(color, inTexCoord + (direction.xy * 2 - 1) + height);
+    //original color
+    vec3 color = texture(texColor, inTexCoord).rgb;
+
+    //reflection
+    vec4 refOffset = texture(texDistortionDirection, inTexCoord);
+    float refRandomOffset = refOffset.b
+    * texture(texDistortionRandom, inTexCoord + uniformRandomOffset1).r
+    * texture(texDistortionRandom, inTexCoord + uniformRandomOffset2).r;
+    vec3 refColor = texture(texColor, inTexCoord + (refOffset.xy * 2 - 1) + refRandomOffset).rgb * refOffset.a;
+    if (refOffset.w > 0) {
+        color = color * (1-refOffset.w) + refColor * refOffset.w;
+    }
+
+    outColor = vec4(color, 1);
 }
