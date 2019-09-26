@@ -8,7 +8,7 @@ import java.util.function.Function;
 
 import static de.teamSparkles.engine.graphics.GlErrorCheck.checkError;
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_DONT_CARE;
 import static org.lwjgl.opengl.GL43.*;
 
 public class GameLoop implements Runnable {
@@ -59,7 +59,6 @@ public class GameLoop implements Runnable {
 		Game game = starter.apply(this);
 		while (!glfwWindowShouldClose(windowPointer)) {
 			game.update();
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			checkError("pre-render");
 			game.render();
 			checkError("post-render");

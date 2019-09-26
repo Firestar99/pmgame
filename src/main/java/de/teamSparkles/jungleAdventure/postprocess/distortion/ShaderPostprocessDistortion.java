@@ -29,13 +29,13 @@ public class ShaderPostprocessDistortion extends GlShader {
 		uniformRandomOffset2 = glGetUniformLocation(shaderProgram, "uniformRandomOffset2");
 	}
 	
-	public void draw(GlTexture color, GlTexture distortionDirection, GlTexture distortionRandom, float[] randomOffset1, float[] randomOffset2) {
+	public void draw(GlTexture color, GlTexture distortionDirection, GlTexture distortionRandomNormal, float[] randomOffset1, float[] randomOffset2) {
 		bind();
 		glUniform2f(uniformRandomOffset1, randomOffset1[0], randomOffset1[1]);
 		glUniform2f(uniformRandomOffset2, randomOffset2[0], randomOffset2[1]);
 		color.bind(0);
 		distortionDirection.bind(1);
-		distortionRandom.bind(2);
+		distortionRandomNormal.bind(2);
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 		unbind();
 	}

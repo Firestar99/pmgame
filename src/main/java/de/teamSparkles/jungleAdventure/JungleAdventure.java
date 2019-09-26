@@ -66,7 +66,7 @@ public class JungleAdventure extends Game {
 		glBindVertexArray(vaoEmpty);
 		
 		//images
-		textureEmoji = new GlTexture(Texture.load(JungleAdventure.class.getResourceAsStream("emoji.png")), TEXTURE_PARAM_NEAREST);
+		textureEmoji = new GlTexture(Texture.load(JungleAdventure.class.getResourceAsStream("emoji.png")), TEXTURE_PARAM_LINEAR);
 		
 		//shaders
 		shaderTextureRead = ShaderTextureRead.create();
@@ -94,13 +94,15 @@ public class JungleAdventure extends Game {
 	@Override
 	public void render() {
 		fbo3d.bind();
+		glClearColor(1, 1, 1, 0);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		shaderTextureRead.draw(new float[]{
-				-1, -1, 0, 0,
-				-1, 1, 0, 1,
-				1, 1, 1, 1,
-				-1, -1, 0, 0,
-				1, -1, 1, 0,
-				1, 1, 1, 1,
+				-1, -0.9f, 0, 0,
+				-1, 1.1f, 0, 1,
+				1, 1.1f, 1, 1,
+				-1, -0.9f, 0, 0,
+				1, -0.9f, 1, 0,
+				1, 1.1f, 1, 1,
 		}, textureEmoji);
 		GlFramebuffer.unbind();
 		
